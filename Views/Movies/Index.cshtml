@@ -1,0 +1,33 @@
+﻿@model IEnumerable<MovieStoreNew.Models.Movie>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (!Model.Any())
+{
+    <p>No movies found.</p>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>
+                    Movies
+                </th>
+            </tr>
+        </thead>
+
+        @foreach (var movie in Model)
+        {
+            <tbody>
+                <tr>
+                    <td>
+                        @Html.ActionLink(movie.Name, "Details", new { id = movie.Id })
+                    </td>
+                </tr>
+            </tbody>
+        }
+    </table>
+}
