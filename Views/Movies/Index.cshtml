@@ -16,6 +16,9 @@ else
                 <th>
                     Movies
                 </th>
+                <th>
+                    Genre
+                </th>
             </tr>
         </thead>
 
@@ -25,6 +28,9 @@ else
                 <tr>
                     <td>
                         @Html.ActionLink(movie.Name, "Details", new { id = movie.Id })
+                    </td>
+                    <td>
+                        @movie.Genre.Name
                     </td>
                 </tr>
             </tbody>
