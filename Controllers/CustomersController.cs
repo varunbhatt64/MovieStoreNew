@@ -3,6 +3,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using MovieStoreNew.Models;
+using MovieStoreNew.ViewModels;
 
 namespace MovieStoreNew.Controllers
 {
@@ -31,6 +32,44 @@ namespace MovieStoreNew.Controllers
                 return View(customer);
             else
                 return HttpNotFound();
+        }
+
+        public ActionResult Edit(int id)
+        {
+            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+            if (customer == null)
+                return HttpNotFound();
+
+            var viewModel = new CustomerFormViewModel
+            {
+                Customer = customer,
+                MembershipTypes = _context.MembershipTypes.ToList()
+            };
+            return View("CustomerForm", viewModel);
+        }
+
+        public ActionResult New()
+        {
+            var membershipTypes = _context.MembershipTypes.ToList();
+            return View("CustomerForm", new CustomerFormViewModel { MembershipTypes = membershipTypes });
+        }
+
+        [HttpPost]
+        public ActionResult Save(Customer customer)
+        {
+            if (customer.Id == 0)
+                _context.Customers.Add(customer);
+            else
+            {
+                var existingCustomer = _context.Customers.Single(c => c.Id == customer.Id);
+
+                existingCustomer.Name = customer.Name;
+                existingCustomer.BirthDate = customer.BirthDate;
+                existingCustomer.MembershipTypeId = customer.MembershipTypeId;
+                existingCustomer.IsSubscribedToNewsletter = customer.IsSubscribedToNewsletter;
+            }
+            _context.SaveChanges();
+            return RedirectToAction("Index", "Customers");
         }
     }
 }

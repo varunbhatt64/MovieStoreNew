@@ -31,27 +31,63 @@ namespace MovieStoreNew.Controllers
 
         public ActionResult Details(int id)
         {
-            var movie = _context.Movies.Include(m => m.Genre).FirstOrDefault(m => m.Id == id);
+            var movie = _context.Movies.Include(m => m.Genre).SingleOrDefault(m => m.Id == id);
             if (movie != null)
                 return View(movie);
             else
                 return HttpNotFound();
         }
+
+        public ActionResult New()
+        {
+            return View("MovieForm", new MovieFormViewModel { Genres = _context.Genres.ToList() });
+        }
+
+        public ActionResult Edit(int id)
+        {
+            var movie = _context.Movies.SingleOrDefault(m => m.Id == id);
+            if (movie == null)
+                return HttpNotFound();
+            var viewModel = new MovieFormViewModel
+            {
+                Movie = movie,
+                Genres = _context.Genres.ToList()
+            };
+            return View("MovieForm", viewModel);
+        }
+
+        public ActionResult Save(Movie movie)
+        {
+            if (movie.Id == 0)
+                _context.Movies.Add(movie);
+            else
+            {
+                var existingMovie = _context.Movies.Single(m => m.Id == movie.Id);
+                existingMovie.Name = movie.Name;
+                existingMovie.GenreId = movie.GenreId;
+                existingMovie.ReleaseDate = movie.ReleaseDate;
+                existingMovie.DateAdded = movie.DateAdded;
+                existingMovie.NumberInStock = movie.NumberInStock;
+            }
+            _context.SaveChanges();
+            return RedirectToAction("Index", "Movies");
+        }
+
         // GET: Movies/Random
         public ActionResult Random()
         {
-            var movie = new Movie(){Name = "Race"};
-            var customers = new List<Customer>{new Customer{Id = 1, Name = "Varun"}, new Customer{Id=2, Name = "Mansi"}};
-            var model = new RandomMovieViewModel{Movie = movie, Customers = customers};
+            var movie = new Movie() { Name = "Race" };
+            var customers = new List<Customer> { new Customer { Id = 1, Name = "Varun" }, new Customer { Id = 2, Name = "Mansi" } };
+            var model = new RandomMovieViewModel { Movie = movie, Customers = customers };
             //ViewData["movie"] = movie;
             //ViewBag.Movie = movie;
             return View(model);
         }
 
-        public ActionResult Edit(int id)
-        {
-            return Content("id=" + id);
-        }
+        //public ActionResult Edit(int id)
+        //{
+        //    return Content("id=" + id);
+        //}
 
         //public ActionResult Index(int? pageIndex, string sortBy)
         //{
