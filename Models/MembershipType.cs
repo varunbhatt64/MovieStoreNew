@@ -17,5 +17,8 @@ namespace MovieStoreNew.Models
         public short SignUpFee { get; set; }
         public byte DurationInMonths { get; set; } // use byte as month is between 1 & 12 only
         public byte DiscountRate { get; set; }
+
+        public static readonly byte Unknown = 0;
+        public static readonly byte None = 1;
     }
 }
